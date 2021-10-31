@@ -1,4 +1,4 @@
-defmodule HomeworkTest do
+defmodule ForgotPassword do
   # Import helpers
   use Hound.Helpers
   use ExUnit.Case
@@ -6,21 +6,36 @@ defmodule HomeworkTest do
   # Start hound session and destroy when tests are run
   hound_session()
 
-  test "Add/Remove Elements in Heroku" do
+  test "Forgot Password" do
     navigate_to "https://the-internet.herokuapp.com/"
     
-    # Find Add/Remove Elements, navigate to new page and confirm with URL 
+    # Navigate to Forgot Password, confirm with URL 
     content = find_element(:id, "content")
-    checkboxes_nav = find_within_element(content, :xpath, ~s|//a[contains(text(),"Checkboxes")]|)
+    forgot_password_nav = find_within_element(content, :xpath, ~s|//a[contains(text(),"Forgot Password")]|)
 
-    checkboxes_nav |> click()
-    assert current_url() == "https://the-internet.herokuapp.com/checkboxes"
+    forgot_password_nav |> click()
+    assert current_url() == "https://the-internet.herokuapp.com/forgot_password"
 
-    checkboxes = find_element(:id, "checkboxes")
-    checkbox_1 = find_within_element(checkboxes, :xpath, ~s|//*[contains(text(),"checkbox")]|)
+    # Should input value into field, and add additional text. Verify each exists after input. 
+    email = find_element(:id, "email")
+    retrieve_password = find_element(:id, "form_submit")
+
+    input_into_field(email, "test@")
+    assert attribute_value(email, "value") == "test@"
     
-    checkbox_1 |> click()
+    input_into_field(email, "test.org")
+    assert attribute_value(email, "value") == "test@test.org"
 
+    # Submit, navigate back one page to confirm button worked as intended
+    retrieve_password |> click()
+    assert visible_page_text() =~ "Internal Server Error"
+    # Capture screenshot on failure
+      catch
+        error ->
+        take_screenshot()
+        raise error
+
+    delete_cookies()
   end
 end
 
@@ -51,9 +66,8 @@ defmodule AlertTest do
    
     # Click for JS Alert Button; Verify alert text exists after JS alert menu is closed
     click_for_alert |> click()
-    dialog_text(alert) == "I am a JS Alert"
+    # dialog_text(alert) == "I am a JS Alert"
     send_keys(:enter)
-    assert visible_text(alert) == "You successfully clicked an alert"
 
     # Click for JS Confirm Button; Verify no alert text exists before, and does exist after
     click_for_confirm |> click()
@@ -65,13 +79,44 @@ defmodule AlertTest do
     click_for_confirm |> click()
     send_keys(:tab)
     send_keys(:enter)
-    #assert visible_text(cancel) == "You clicked: Cancel"
 
     # JS Prompt button; Verify no alert text exists before, and does exist after 
     click_for_prompt |> click()
-    send_text "You entered text"
+    send_text(:"You entered text")
     send_keys(:tab)
     send_keys(:enter)
+    assert visible_text(alert) == "You entered text"
+   
+    delete_cookies()
+  end
+end
+
+defmodule ContextTest do
+  # Import helpers
+  use Hound.Helpers
+  use ExUnit.Case
+
+  # Start hound session and destroy when tests are run
+  hound_session()
+
+  test "Context Menu in Heroku" do
+    navigate_to "https://the-internet.herokuapp.com/"
     
+    # Find Context Menu link, navigate to new page and confirm with URL 
+    content = find_element(:id, "content")
+    context_nav = find_within_element(content, :xpath, ~s|//a[contains(text(),"Context Menu")]|)
+
+    context_nav |> click()
+    assert current_url() == "https://the-internet.herokuapp.com/context_menu"
+
+    # Alias context menu box, interact with context menu
+    context_box = find_element(:id, "hot-spot")
+
+    move_to(context_box, 5, 5)
+    mouse_down("button \\ 2")
+    path = take_screenshot("screenshot-test.png")
+    assert File.exists?(path)
+
+    delete_cookies()
   end
 end
