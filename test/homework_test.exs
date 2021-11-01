@@ -52,7 +52,6 @@ defmodule ForgotPassword do
   end
 end
 
-
 defmodule HoverTest do
   # Import helpers
   use Hound.Helpers
