@@ -7,9 +7,4 @@
 # The directory Mix downloads your dependencies sources to.
 /deps/
 
-config/phantomjs.exe
-config/test.exs
-
-test/phantomjs.exe
-
-phantomjs.exe
+screenshots
