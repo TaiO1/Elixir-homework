@@ -2,7 +2,7 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-# Start with selenium driver (default)
+# Start with PhantomJS
 #config :hound, driver: "phantomjs"
 
 # Start Hound for ChromeDriver (default port 9515 assumed)
