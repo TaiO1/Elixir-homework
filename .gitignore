@@ -7,4 +7,5 @@
 # The directory Mix downloads your dependencies sources to.
 /deps/
 
-screenshots
+Success!.png
+failure.png
